@@ -96,9 +96,10 @@ $ex = Session::read('ex');
 					<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 				<?php }?>
 				<?php echo $this->content(); ?>
-					<div class="footer">
+					<div class="footer container-fluid">
 						<?php echo $this->_render('element', 'footer');?>	
 					</div>	<!-- footer -->
+
 				</div> <!-- main -->					
 			</div> <!-- row-->
 		</div> <!-- container-fluid -->
