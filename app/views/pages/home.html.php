@@ -63,8 +63,6 @@ $trades = Trades::find('all',array('limit'=>$howmany,'order'=>array('order'=>1))
 				array('$limit'=>count($trades))
 			)
 		));
-
-
 ?>
 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-1 main">
 		<div class="row placeholders">
@@ -127,8 +125,8 @@ $trades = Trades::find('all',array('limit'=>$howmany,'order'=>array('order'=>1))
 					<?php }}?>
 		</div>
 
-		<h2 style="text-align:center">EXCHANGE GREENCOINX FOR EURO, US DOLLAR, CANADIAN DOLLAR OR BITCOIN</h2>
-		<p style="text-align:center;font-size:18px"><strong>SiiCrypto – a crypto currency exchange specializing in GreenCoinX the world’s first identifiable crypto currency</strong></p>
+		<h3 style="text-align:center">Exchange GreenCoinX - Euro, US Dollar, Canadian Dollar or Bitcoin</h3>
+		<p style="text-align:center;font-size:18px"><strong><?=COMPANY_NAME?> – a crypto currency exchange specializing in GreenCoinX the world’s first identifiable crypto currency</strong></p>
 		</div>
 	<div class="col-xs-12 col-sm-4">
 		<!-- <a class="twitter-timeline"  href="https://twitter.com/SIICrypto"  data-widget-id="aaaaaaaaaaaaaaaaaaaa">Tweets by @SIICrypto</a> -->
