@@ -64,13 +64,13 @@ $trades = Trades::find('all',array('limit'=>$howmany,'order'=>array('order'=>1))
 			)
 		));
 ?>
-<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-1 main">
+<p>&nbsp;</p>
+<div class="container-fluid">
 		<div class="row placeholders">
 		<?php foreach($tradesVF as $tradeVF){
 					if(substr($tradeVF['trade'],0,3)==$second_currency){
 			?>
-				<div class="col-xs-6 col-sm-4  placeholder">
-						<a href="/ex/x/<?=strtolower(str_replace("/","_",$tradeVF['trade']))?>"><img src="/img/<?=strtolower(str_replace("/","_",$tradeVF['trade']))?>.png" class="img-responsive" alt="Generic placeholder thumbnail">
+				<div class="col-xs-6 col-sm-6  placeholder" style="text-align:center">
 						<h4><?=$tradeVF['trade']?></h4>
 						<?php
 								foreach($Rates['result'] as $rate){
@@ -79,17 +79,14 @@ $trades = Trades::find('all',array('limit'=>$howmany,'order'=>array('order'=>1))
 									}
 								}
 						?>
-						
-						</a>
 				</div>
 					<?php }}?>
 		</div>
 
 		<div class="row placeholders">
-				<div class="col-xs-6 col-sm-4  placeholder">
+				<div class="col-xs-6 col-sm-12  placeholder">
 				</div>
-				<div class="col-xs-6 col-sm-4  placeholder">
-						<a href="/ex/x/<?=strtolower(str_replace("/","_",$tradesV['trade']))?>"><img src="/img/<?=strtolower(str_replace("/","_",$tradesV['trade']))?>.png" class="img-responsive" alt="Generic placeholder thumbnail">
+				<div class="col-xs-6 col-sm-12  placeholder"  style="text-align:center">
 						<h4><?=$tradesV['trade']?></h4>
 						<?php
 								foreach($Rates['result'] as $rate){
@@ -98,18 +95,16 @@ $trades = Trades::find('all',array('limit'=>$howmany,'order'=>array('order'=>1))
 									}
 								}
 						?>
-						
 						</a>
-				</div>
-				<div class="col-xs-6 col-sm-4  placeholder">
+				<div class="col-xs-6 col-sm-12  placeholder">
 				</div>
 		</div>
+<p>&nbsp;</p>
 		<div class="row placeholders">
 		<?php foreach($tradesVF as $tradeVF){
 					if(substr($tradeVF['trade'],0,3)==$first_currency){
 			?>
-				<div class="col-xs-6 col-sm-4  placeholder">
-						<a href="/ex/x/<?=strtolower(str_replace("/","_",$tradeVF['trade']))?>"><img src="/img/<?=strtolower(str_replace("/","_",$tradeVF['trade']))?>.png" class="img-responsive" alt="Generic placeholder thumbnail">
+				<div class="col-xs-6 col-sm-6  placeholder">
 						<h4><?=$tradeVF['trade']?></h4>
 						<?php
 								foreach($Rates['result'] as $rate){
@@ -118,18 +113,9 @@ $trades = Trades::find('all',array('limit'=>$howmany,'order'=>array('order'=>1))
 									}
 								}
 						?>
-						
-						
-						</a>
 				</div>
 					<?php }}?>
 		</div>
-
 		<h3 style="text-align:center">Exchange GreenCoinX - Euro, US Dollar, Canadian Dollar or Bitcoin</h3>
 		<p style="text-align:center;font-size:18px"><strong><?=COMPANY_NAME?> – a crypto currency exchange specializing in GreenCoinX the world’s first identifiable crypto currency</strong></p>
 		</div>
-	<div class="col-xs-12 col-sm-4">
-		<!-- <a class="twitter-timeline"  href="https://twitter.com/SIICrypto"  data-widget-id="aaaaaaaaaaaaaaaaaaaa">Tweets by @SIICrypto</a> -->
-		</div>
-	
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>

@@ -1,7 +1,7 @@
 <?php
 namespace app\controllers;
 
-use lithium\security\Auth;
+
 use lithium\util\String;
 use app\models\Users;
 use app\models\Pages;
@@ -23,14 +23,25 @@ class SessionsController extends \lithium\action\Controller {
 			$IPResponse = json_decode($response);
 			if($IPResponse->tor) {
 		    // Display error message or something
-					Auth::clear('member');
+					$user = "";
 					Session::delete('default');
 					return false;
 			}
-			if (Auth::check('member', $this->request)){
+			$user = Users::find("first",array(
+				"conditions"=>array("username" => $this->request->data['username'])
+			));
+			$default = array(
+				'username' => $user['username'],
+				'_id' => $user['_id'],
+				'firstname'=>$user['firstname'],
+				'lastname'=>$user['lastname'],
+				'email'=>$user['email'],
+				'walletid'=>$user['walletid']
+			);
+			if (password_verify($this->request->data['password'], $user['password'])){
 				//Redirect on successful login
 				$loginpassword = $this->request->data['loginpassword'];
-				$default = Auth::check('member', $this->request);
+				Session::write('default',$default);
 				$details = Details::find('first',array(
 					'conditions' => array(
 						'username'=>$default['username'],
@@ -38,7 +49,6 @@ class SessionsController extends \lithium\action\Controller {
 						)
 				));
 				if($details['active']=="No"){
-					Auth::clear('member');
 					Session::delete('default');
 					return $this->redirect('/');
 					exit;
@@ -76,7 +86,7 @@ class SessionsController extends \lithium\action\Controller {
 						$totp = $this->request->data['totp'];
 						$ga = new GoogleAuthenticator();
 						if($totp==""){
-							Auth::clear('member');
+							
 							Session::delete('default');
 						}else{
 							$checkResult = $ga->verifyCode($details['secret'], $totp, 2);		
@@ -103,10 +113,12 @@ class SessionsController extends \lithium\action\Controller {
 								);
 								Logins::create()->save($data);
 /////////////////////////////////////////////////////////////////////////////////								
+							$user = Session::read('default');
+								
 								return $this->redirect('ex::dashboard');
 								exit;
 							}else{
-								Auth::clear('member');
+							
 								Session::delete('default');
 							}
 						}
@@ -132,15 +144,15 @@ class SessionsController extends \lithium\action\Controller {
 								);
 								Logins::create()->save($data);
 						/////////////////////////////////////////////////////////////////////////////////						
+						$user = Session::read('default');
+					
 						return $this->redirect('ex::dashboard');
 						exit;
 					}
 				}else{
-					Auth::clear('member');
 					Session::delete('default');
 				}
 				}else{
-				
 					$data = array(
 							'oneCodeused'=>'Yes',
 							'lastconnected'=>array(									
@@ -188,6 +200,8 @@ class SessionsController extends \lithium\action\Controller {
 								);
 								Logins::create()->save($data);
 						/////////////////////////////////////////////////////////////////////////////////						
+						$user = Session::read('default');
+						
 						return $this->redirect('ex::dashboard');
 				
 				
@@ -214,7 +228,7 @@ class SessionsController extends \lithium\action\Controller {
         // Handle failed authentication attempts
   }
 	 public function delete() {
-		Auth::clear('member');
+		
 		Session::delete('default');
 		return $this->redirect('/');
 		exit;

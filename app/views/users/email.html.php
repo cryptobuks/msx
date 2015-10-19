@@ -1,4 +1,6 @@
-<div class="col-md-12">
+<?php 
+$verify = "email";
+echo $this->_render('element', 'verification', compact('verify'));?>	
 	<h3>Email Verification:</h3>
 	<?php echo $msg;?>
 	<?=$this->form->create("",array('url'=>'/users/confirm/')); ?>
@@ -7,4 +9,3 @@
 	<?=$this->form->submit('Verify',array('class'=>'btn btn-primary')); ?>
 	<?=$this->form->end(); ?>
 	<p>Please check your spam folder too while checking your inbox!</p>
-</div>

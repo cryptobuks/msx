@@ -261,13 +261,13 @@ function SendPassword(){
 	$.getJSON('/Users/SendPassword/'+$("#Username").val(),
 		function(ReturnValues){
 			if(ReturnValues['Password']=="Password Not sent"){
-				$("#UserNameIcon").attr("class", "glyphicon glyphicon-remove");
+				$("#UserNameIcon").attr("class", "fa fa-remove");
 				$("#LoginEmailPassword").hide();
 				return false;
 			}
 			$("#LoginEmailPassword").show();
 			$("#LoginButton").removeAttr('disabled');			
-			$("#UserNameIcon").attr("class", "glyphicon glyphicon-ok");
+			$("#UserNameIcon").attr("class", "fa fa-check");
 			
 			if(ReturnValues['TOTP']=="Yes"){
 				$("#TOTPPassword").show();
@@ -410,21 +410,21 @@ function CheckCurrencyPayment(currency){
 				switch(ReturnValues['currency'])
 					{
 					case "BTC":
-					address = "<a href='http://blockchain.info/address/"+ address +"' target='_blank'>"+ address +"</a> <i class='glyphicon glyphicon-ok'></i>";
+					address = "<a href='http://blockchain.info/address/"+ address +"' target='_blank'>"+ address +"</a> <i class='fa fa-ok'></i>";
 						break;
 					case "XGC":
-					address = "<a href='http://greencoin.io/blockchain/address/"+ address +"' target='_blank'>"+ address +"</a> <i class='glyphicon glyphicon-ok'></i>";
+					address = "<a href='http://greencoin.io/blockchain/address/"+ address +"' target='_blank'>"+ address +"</a> <i class='fa fa-ok'></i>";
 
 						break;
 					case "LTC":
-					address = "<a href='http://ltc.block-explorer.com/address/"+ address +"' target='_blank'>"+ address +"</a> <i class='glyphicon glyphicon-ok'></i>";
+					address = "<a href='http://ltc.block-explorer.com/address/"+ address +"' target='_blank'>"+ address +"</a> <i class='fa fa-ok'></i>";
 						break;
 					default:
-					address = address +" <i class='glyphicon glyphicon-remove'></i>";					
+					address = address +" <i class='fa fa-remove'></i>";					
 					} 
 					$("#Send"+currency+"SuccessButton").removeAttr('disabled');							
 				}else{
-						address = address +" <i class='glyphicon glyphicon-remove'></i>";					
+						address = address +" <i class='fa fa-remove'></i>";					
 				}
 			$("#Send"+currency+"Address").html(address); 	
 });
@@ -478,69 +478,181 @@ function AutoFillSell(){
 }
 function CheckFirstName(value){
 	if(value.length>=2){
-		$("#FirstNameIcon").attr("class", "glyphicon glyphicon-ok");	
+		$("#FirstNameIcon").attr("class", "fa fa-check");	
 	}else{
-		$("#FirstNameIcon").attr("class", "glyphicon glyphicon-remove");			
+		$("#FirstNameIcon").attr("class", "fa fa-remove");			
 	}
 }
 function CheckLastName(value){
 	if(value.length>=2){
-		$("#LastNameIcon").attr("class", "glyphicon glyphicon-ok");	
+		$("#LastNameIcon").attr("class", "fa fa-check");	
 	}else{
-		$("#LastNameIcon").attr("class", "glyphicon glyphicon-remove");			
+		$("#LastNameIcon").attr("class", "fa fa-remove");			
 	}
 }
 function CheckUserName(value){
-	if(value.length>6){
-		$.getJSON('/Users/username/'+value,
+	if(value.length>=6){
+		$.getJSON('/ex/username/'+value,
 		function(ReturnValues){
 			if(ReturnValues['Available']=='Yes'){
-				$("#UserNameIcon").attr("class", "glyphicon glyphicon-ok");	
+				$("#UserNameIcon").attr("class", "fa fa-check");	
 			}else{
-				$("#UserNameIcon").attr("class", "glyphicon glyphicon-remove");							
+				$("#UserNameIcon").attr("class", "fa fa-remove");							
 			}
 		});
 	}else{
-		$("#UserNameIcon").attr("class", "glyphicon glyphicon-remove");			
+		$("#UserNameIcon").attr("class", "fa fa-asterisk");			
+	}
+}
+function CheckPassword(value){
+	if(value.length>=10){
+		if($("#Password").val()==$("#Password2").val()){
+			$("#PasswordIcon").attr("class", "fa fa-check");			
+			$("#Password2Icon").attr("class", "fa fa-check");
+		}else{
+			$("#PasswordIcon").attr("class", "fa fa-remove");					
+			$("#Password2Icon").attr("class", "fa fa-remove");							
+			return;
+		}
+	}else{
+		$("#PasswordIcon").attr("class", "fa fa-asterisk");					
+		$("#Password2Icon").attr("class", "fa fa-asterisk");							
+		return;
 	}
 }
 function CheckEmail(email){
 	email = email.toLowerCase();
 	$("#Email").val(email);	
 	if(validateEmail(email)){
-		$.getJSON('/Users/signupemail/'+email,
+		$.getJSON('/ex/signupemail/'+email,
 			function(ReturnValues){
 			if(ReturnValues['Available']=='Yes'){
-				$("#EmailIcon").attr("class", "glyphicon glyphicon-ok");					
-
+				$("#EmailIcon").attr("class", "fa fa-check");					
 			}else{
-				$("#EmailIcon").attr("class", "glyphicon glyphicon-remove");
+				$("#EmailIcon").attr("class", "fa fa-remove");
 			}
 		});							
 	}else{
-		$("#EmailIcon").attr("class", "glyphicon glyphicon-remove");						
+		$("#EmailIcon").attr("class", "fa fa-asterisk");						
 	}
 }
-function CheckPassword(value){
-	if(value.length>6){
-		if($("#Password").val()==$("#Password2").val()){
-			$("#PasswordIcon").attr("class", "glyphicon glyphicon-ok");			
-			$("#Password2Icon").attr("class", "glyphicon glyphicon-ok");					
-		}else{
-			$("#PasswordIcon").attr("class", "glyphicon glyphicon-remove");					
-			$("#Password2Icon").attr("class", "glyphicon glyphicon-remove");							
-		}
-	}else{
-		$("#PasswordIcon").attr("class", "glyphicon glyphicon-remove");					
-		$("#Password2Icon").attr("class", "glyphicon glyphicon-remove");							
-	}
-	}
+
+function registerUser(){
+	var walletid = guid();
+	var xemail = '';
+	var xwalletid = '';
+	var recordid = '';
+	if($("#FirstNameIcon").attr("class")!='fa fa-check'){return false;}
+	if($("#LastNameIcon").attr("class")!='fa fa-check'){return false;}
+	if($("#UserNameIcon").attr("class")!='fa fa-check'){return false;}
+	if($("#EmailIcon").attr("class")!='fa fa-check'){return false;}
+	if($("#PasswordIcon").attr("class")!='fa fa-check'){return false;}
+
+	$.getJSON('/ex/register/',{
+				FirstName:$("#Firstname").val(),
+				LastName:$("#Lastname").val(),
+				UserName:$("#Username").val(),
+				Email:$("#Email").val(),
+				Password:$("#Password").val(),
+				Walletid:walletid,
+			}, function(ReturnValues){
+//				alert(ReturnValues['success']);
+//				alert(ReturnValues['xemail']);
+//				alert(ReturnValues['xwalletid']);
+//				alert(ReturnValues['recordid']);
+					if(ReturnValues['success']==1){
+						xemail = ReturnValues['xemail'];
+						xwalletid = ReturnValues['xwalletid'];
+						recordid = ReturnValues['recordid'];
+						var email = $("#Email").val();
+						var password = $("#Password").val();
+						var username = $("#Username").val();
+						var keys = createKeys(recordid,xemail,xwalletid,email,walletid,username);
+						var address0 = keys.pubkey.toString();	
+						var privkey0 = keys.privkey.toString();
+						var pubkeycompress0 = keys.pubkeycompress.toString();		
+					//	alert(address);
+					//	alert(privkey);
+					//	alert(pubkeycompress0);
+
+						email = ReturnValues['main_email'];
+						xemail = ReturnValues['xmain_email'];
+						var keys = createKeys(recordid,xemail,xwalletid,email,walletid,username);
+						var address1 = keys.pubkey.toString();	
+						var privkey1 = keys.privkey.toString();
+						var pubkeycompress1 = keys.pubkeycompress.toString();		
+					//	alert(address);
+					//	alert(privkey);
+					//	alert(pubkeycompress1);
+
+						email = ReturnValues['escrow_email'];
+						xemail = ReturnValues['xescrow_email'];
+						var keys = createKeys(recordid,xemail,xwalletid,email,walletid,username);
+						var address2 = keys.pubkey.toString();	
+						var privkey2 = keys.privkey.toString();
+						var pubkeycompress2 = keys.pubkeycompress.toString();		
+					//	alert(address);
+					//	alert(privkey);
+					//	alert(pubkeycompress2);
+				
+					$.getJSON('/ex/updateaddress/',{
+						recordid:recordid,
+						pk0:pubkeycompress0,
+						pk1:pubkeycompress1,
+						pk2:pubkeycompress2,
+					 walletid:walletid,
+					},function(rv){
+							if(rv['success']==1){
+								window.location.assign("/users/email");
+//								alert("Done");
+							}
+					});	
+				}
+			});
+	return false;
+}
 
 	function EmailPasswordSecurity(value){
 		$.getJSON('/Users/EmailPasswordSecurity/'+value,
 		function(ReturnValues){});
 	}
+////////////////////////Common Functions////////////////////////////////////////////////
 function validateEmail(email) { 
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 } 
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}
+function createKeys(recordid,xemail,xwalletid,email,walletid,username){
+//	alert("record: "+record);
+//	alert("recordid: "+recordid);
+//	alert("xemail: "+xemail);
+//	alert("xwalletid: "+xwalletid);
+//	alert("email: "+email);
+//	alert("walletid: "+walletid);
+//	alert("username: "+username);
+//	alert("password: "+password);
+
+		var keys = btc.keys(
+			Crypto.SHA256(
+				recordid + email + xemail + walletid + xwalletid + username + 
+				Crypto.SHA256(
+					recordid + email + xemail + walletid + xwalletid + username + 
+					Crypto.SHA256(
+						recordid + email + xemail + walletid + xwalletid + username 
+					)
+				)
+			)
+		);
+		//var greencoinAddress = keys.pubkey.toString();	
+		//var privkey = keys.privkey.toString();
+		//var pubkeycompress = keys.pubkeycompress.toString();		
+		return keys;
+}

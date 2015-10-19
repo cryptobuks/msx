@@ -1,26 +1,26 @@
-<div class="row container-fluid" style="padding:20px">
-	<h4 class="nav navbar-nav">
-	<small style="font-size:11px;">© <?=COMPANY_START?> - <?=gmdate('Y',time())?> <?=COMPANY_NAME?>. All rights reserved.
-	</small></h4>
-</div>
-<div class="row container-fluid"  style="font-size:11px;border-top:1px solid gray;border-bottom:double">
-	<ul class="nav navbar-nav" >
-		<li><a href="/">Home</a></li>		
-		<li><a href="/company/contact">Contact</a></li>		
-		<li><a href="/company/aboutus">About</a></li>	
-		<li><a href="/company/howitworks">How it works</a></li>	
-		<li><a href="/company/security">Security</a></li>	
-		<li><a href="/company/riskmanagement">Risk</a></li>				
-		<li><a href="/company/verification">Verification</a></li>						
-		<li><a href="/company/privacy">Privacy</a></li>		
-		<li><a href="/company/termsofservice">Terms</a></li>				
-	</ul>
-</div>
-<div class="row container-fluid">
-	<p>
-		<small style="font-size:11px;"><?=COMPANY_NAME?> is a business name of <strong><?=COMPANY_NAME?> Inc.</strong></small>
-	</p>
-</div>
+<footer class="container-fluid">
+	<nav class="navbar navbar-bottom navbar-light bg-faded" >
+		<div style="padding-left:20px;border-top:1px solid gray; border-bottom:1px dotted;background-color:#eeeeee">
+			<ul class="nav navbar-nav container" >
+				<li class="nav-item"><a class="nav-link" href="/">Home</a></li>		
+				<li class="nav-item"><a class="nav-link" href="/company/contact">Contact</a></li>		
+				<li class="nav-item"><a class="nav-link" href="/company/aboutus">About</a></li>	
+				<li class="nav-item"><a class="nav-link" href="/company/howitworks">How it works</a></li>	
+				<li class="nav-item"><a class="nav-link" href="/company/security">Security</a></li>	
+				<li class="nav-item"><a class="nav-link" href="/company/riskmanagement">Risk</a></li>				
+				<li class="nav-item"><a class="nav-link" href="/company/verification">Verification</a></li>						
+				<li class="nav-item"><a class="nav-link" href="/company/privacy">Privacy</a></li>		
+				<li class="nav-item"><a class="nav-link" href="/company/termsofservice">Terms</a></li>				
+			</ul>
+		</div>
+				<div style="font-size:11px;border-top:1px solid gray;border-bottom:1px dotted " class="bg-success container-fluid">
+		<p>© <?=COMPANY_START?> - <?=gmdate('Y',time())?> <?=COMPANY_NAME?> 
+		<small><span class="pull-right"><?php 	echo number_format($pagetotaltime*1000,2);  ?> ms</span></small>
+		</p>
+		</div>
+
+	</nav>
+</footer>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

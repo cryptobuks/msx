@@ -1,77 +1,122 @@
 <?php
 use app\models\Trades;
+use app\models\Orders;
 use lithium\storage\Session;
+use lithium\data\Connections;
 use app\extensions\action\Functions;
 ?>
-<?php $user = Session::read('member'); ?>
-<div class="navbar-header">
-	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-		<span class="sr-only">Toggle navigation</span>
-		<span class="icon-bar"></span>
-		<span class="icon-bar"></span>
-		<span class="icon-bar"></span>
-	</button>
-	<a class="navbar-brand" href="/"><img src="/img/logo.png" alt="SiiCrypto.com" title="SII Crypto"></a>
-</div> <!-- navbar-header-->
-<div class="navbar-collapse collapse">
-	<?php 
-			if(strtolower($this->_request->controller)=='ex'){ ?>
-	
-	<?php }else{?>
-	
-<?php }?>				
-	<ul class="nav navbar-nav navbar-right">
-		<?php if($user!=""){ ?>
-			<li ><a href='#' class='dropdown-toggle' data-toggle='dropdown' >
-			<?=$user['username']?> <i class='glyphicon glyphicon-chevron-down'></i>&nbsp;&nbsp;&nbsp;
-			</a>
-			<ul class="dropdown-menu">
-				<li><a href="/users/settings"><i class="fa fa-gears"></i> Settings</a></li>			
-				<li><a href="/ex/dashboard"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-				<li class="divider"></li>				
+<?php $user = Session::read('default'); ?>
 <?php 
-$trades = Trades::find('all');
-$currencies = array();
-$VirtualCurr = array(); $FiatCurr = array();
-foreach($trades as $tr){
-	$first_curr = substr($tr['trade'],0,3);
-	array_push($currencies,$first_curr);
-	$second_curr = substr($tr['trade'],4,3);
-	array_push($currencies,$second_curr);
 
-		if($tr['FirstType']=='Virtual'){
-			array_push($VirtualCurr,$first_curr);
-			}else{
-			array_push($VirtualCurr,$first_curr);
-		}
-		if($tr['SecondType']=='Virtual'){
-			array_push($VirtualCurr,$second_curr);
-			}else{
-			array_push($FiatCurr,$second_curr);
-		}
-}	//for
+$howmany = 100;
+$trades = Trades::find('all',array('limit'=>$howmany,'order'=>array('order'=>1)));
+		$mongodb = Connections::get('default')->connection;
+		$Rates = Orders::connection()->connection->command(array(
+			'aggregate' => 'orders',
+			'pipeline' => array( 
+				array( 
+				'$project' => array(
+					'_id'=>0,
+					'Action' => '$Action',
+					'PerPrice'=>'$PerPrice',					
+					'Completed'=>'$Completed',					
+					'FirstCurrency'=>'$FirstCurrency',
+					'SecondCurrency'=>'$SecondCurrency',	
+					'TransactDateTime' => '$Transact.DateTime',
+				)),
+				array('$match'=>array(
+					'Completed'=>'Y',					
+					)),
+				array('$group' => array( '_id' => array(
+							'FirstCurrency'=>'$FirstCurrency',
+							'SecondCurrency'=>'$SecondCurrency',	
+							'year'=>array('$year' => '$TransactDateTime'),
+							'month'=>array('$month' => '$TransactDateTime'),						
+							'day'=>array('$dayOfMonth' => '$TransactDateTime'),												
+						'hour'=>array('$hour' => '$TransactDateTime'),
+						),
+					'min' => array('$min' => '$PerPrice'), 
+					'avg' => array('$avg' => '$PerPrice'), 					
+					'max' => array('$max' => '$PerPrice'), 
+					'last' => array('$last' => '$PerPrice'), 					
+				)),
+				array('$sort'=>array(
+					'_id.year'=>-1,
+					'_id.month'=>-1,
+					'_id.day'=>-1,					
+					'_id.hour'=>-1,					
+				)),
+				array('$limit'=>count($trades))
+			)
+		));
+//print_r($Rates);
+?>
 
-	$currencies = array_unique($currencies);
-	$VirtualCurr = array_unique($VirtualCurr);
-	$FiatCurr = array_unique($FiatCurr);
-	foreach($VirtualCurr as $currency){
-		echo '<li><a href="/users/funding/'.$currency.'"><i class="fa fa-exchange"></i> Funding '.$currency.'</a></li>';
-	}
-	foreach($FiatCurr as $currency){
-		echo '<li><a href="/users/funding_fiat/'.$currency.'"><i class="fa fa-exchange"></i> Funding '.$currency.'</a></li>';
-	}
+
+
+<nav class="navbar navbar-light bg-success navbar-fixed-top">
+  <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar2">
+    <?=COMPANY_NAME?> &#9776;
+  </button>
+  <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
+    <ul class="nav navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="/"><strong><img src="/img/logo.png" alt="<?=COMPANY_NAME?>"></strong></a>
+      </li>
+						<?php if(!$user==""){?>
+      <li class="nav-item pull-right">
+        <a class="nav-link" href="/logout"><i class="fa fa-power-off"></i> Logout</a>
+      </li>
+      <li class="nav-item pull-right">
+        <a class="nav-link" href="#"><i class="fa fa-user"></i> <?=$user['username']?></a>
+      </li>
+						<?php }else{?>
+						<li class="nav-item pull-right">
+        <a class="nav-link" href="/login"><i class="fa fa-user"></i> Login</a>
+      </li>
+						<li class="nav-item pull-right">
+        <a class="nav-link" href="/users/signup"><i class="fa fa-user"></i> Register</a>
+      </li>
+
+						<?php }?>
+      <li class="nav-item">
+        <a class="nav-link" href="/company/aboutus">About</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<?php if($user!=""){?>
+	<div >
+<nav class="navbar navbar-dark bg-inverse" style="padding-bottom:0px">
+  <!-- Navbar content -->
+		<ul class="nav navbar-nav">
+<?php
+$sel_curr = $this->_request->params['args'][0];
+if($this->_request->params['controller']!='api'){
+	$currencies = array();
+		foreach($trades as $trade){
+			$first_currency = substr($trade['trade'],0,3);		
+			$second_currency = substr($trade['trade'],4,3);		
+			$avg = 0;
+			$price = 0;
+			foreach($Rates['result'] as $rate){
+			 if($rate['_id']['FirstCurrency']==$first_currency && $rate['_id']['SecondCurrency']==$second_currency){
+					$price = $rate['last'];
+			 }
+			}
+?>
+	<li class="nav-item" style="text-align:center">
+			<a class="nav-link" href="/ex/x/<?=strtolower(str_replace("/","_",$trade['trade']))?>">
+			<div><?=$trade['trade']?></div>
+			<div><span class="label label-pill label-default"><?=number_format($price,4)?></span></div>
+			</a>
+	</li>
+<?php
+		}
+}
 
 ?>
-				<li class="divider"></li>								
-				<li><a href="/users/transactions"><i class="fa fa-tasks"></i> Transactions</a></li>							
-				<li class="divider"></li>
-				<li><a href="/print/"><i class="fa fa-print"></i> Print / Cold Storage</a></li>											
-				<li class="divider"></li>												
-				<li><a href="/logout"><i class="fa fa-power-off"></i> Logout</a></li>
-			</ul>
-			<?php }else{?>
-			<li><a href="/login">Login</a></li>
-			<li><a href="/users/signup">Register&nbsp;&nbsp;&nbsp;&nbsp;</a></li>
-			<?php }?>				
 		</ul>
-</div> <!-- navbar-collapse -->
+</nav>	
+	</div>
+<?php }?>

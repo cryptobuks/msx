@@ -26,6 +26,9 @@ use lithium\security\Auth;
 use lithium\storage\Session;
 use app\extensions\action\Functions;
 use app\controllers\UpdatesController;
+use app\extensions\action\GoogleAuthenticator;
+use app\extensions\action\Uuid;
+use app\extensions\action\Greencoin;
 use \lithium\template\View;
 use \Swift_MailTransport;
 use \Swift_Mailer;
@@ -53,7 +56,7 @@ class ExController extends \lithium\action\Controller {
 		));
 		$this->SetGraph($first_curr,$second_curr);
 		
-		$user = Session::read('member');
+		$user = Session::read('default');
 		$id = $user['_id'];
 //		if($id==null){$this->redirect(array('controller'=>'ex','action'=>'dashboard/'));}		
 		$details = Details::find('first',
@@ -672,8 +675,9 @@ class ExController extends \lithium\action\Controller {
 	if($this->request->query['json']==true){
 		$this->_render['type'] = 'json';		
 	}
-	
-		$user = Session::read('member');
+
+		$user = Session::read('default');
+
 		$id = $user['_id'];
 		if ($user==""){		return $this->redirect('/login');exit;}
 		$details = Details::find('first',
@@ -1076,7 +1080,7 @@ $description = "Dashboard for trading platform for bitcoin exchange in United Ki
 	
 	public function AddFriend($hashuser_id,$user_id,$username){
 		if(String::hash($user_id)==$hashuser_id){
-			$user = Session::read('member');
+			$user = Session::read('default');
 			$id = $user['_id'];
 			$details = Details::find('first',
 				array('conditions'=>array('user_id'=>$id))
@@ -1101,7 +1105,7 @@ $description = "Dashboard for trading platform for bitcoin exchange in United Ki
 	
 	public function RemoveFriend($hashuser_id,$user_id,$username){
 		if(String::hash($user_id)==$hashuser_id){
-			$user = Session::read('member');
+			$user = Session::read('default');
 			$id = $user['_id'];
 			$details = Details::find('first',
 				array('conditions'=>array('user_id'=>$id))
@@ -1570,6 +1574,205 @@ $graph->legend->SetFrameWeight(1);
 		return false;
 	}
 
+	public function signupemail($email=null){
+		$usercount = Users::find('all',array(
+			'conditions'=>array('email'=>$email)
+		));
+		if(count($usercount)==0){
+			$Available = 'Yes';
+		}else{
+			$Available = 'No';
+		}
+			return $this->render(array('json' => array(
+			'Available'=> $Available,
+		)));
+	}
+	public function username($username=null){
+		$usercount = Users::find('all',array(
+			'conditions'=>array('username'=>$username)
+		));
+		if(count($usercount)==0){
+			$Available = 'Yes';
+		}else{
+			$Available = 'No';
+		}
+			return $this->render(array('json' => array(
+			'Available'=> $Available,
+		)));
+	}
+	public function register(){
+		if(!$this->request->query['UserName']){
+			return $this->render(array('json' => array("Error"=>"Username not specified")));
+		}
+		if(!$this->request->query['FirstName']){
+			return $this->render(array('json' => array("Error"=>"Firstname not specified")));
+		}
+		if(!$this->request->query['LastName']){
+			return $this->render(array('json' => array("Error"=>"Lastname not specified")));
+		}
+		if(!$this->request->query['Email']){
+			return $this->render(array('json' => array("Error"=>"Email not specified")));
+		}
+		if(!$this->request->query['Password']){
+			return $this->render(array('json' => array("Error"=>"Password not specified")));
+		}
+		
+		$uuid = new Uuid();
+		$ga = new GoogleAuthenticator();
+		
+		$xemail = $uuid->hashme($this->request->query['Email']);
+		$xwalletid = $uuid->hashme($this->request->query['Walletid']);
+		
+		$data = array(
+			'username'=>$this->request->query['UserName'],
+			'firstname'=>$this->request->query['FirstName'],
+			'lastname'=>$this->request->query['LastName'],
+			'email'=>$this->request->query['Email'],
+			'password'=>password_hash($this->request->query['Password'], PASSWORD_BCRYPT),
+			'walletid'=>$this->request->query['Walletid']
+		);
+		$Users = Users::create($data);
+		$saved = $Users->save();
+		if($saved==true){
+			$verification = sha1($Users->_id);
+			$data = array(
+				'user_id'=>(string)$Users->_id,
+				'username'=>(string)$Users->username,
+				'email.verify' => $verification,
+				'email.verified' => "No",
+				'mobile.verified' => "No",				
+				'mobile.number' => "",								
+				'key'=>$ga->createSecret(64),
+				'secret'=>$ga->createSecret(64),
+				'walletid'=>$this->request->query['Walletid']
+				);
+			Details::create()->save($data);
+		}else{
+					return $this->render(array('json' => array(
+			"success"=>0,
+			)));
+		}
+		$xmain_email = $uuid->hashme(MAIN_EMAIL);
+		$xescrow_email = $uuid->hashme(ESCROW_EMAIL);
+				
+		return $this->render(array('json' => array(
+			"success"=>1,
+			"xemail" => $xemail,
+			"xwalletid" => $xwalletid,
+			"recordid" => (string)$Users->_id,
+			"main_email" => MAIN_EMAIL,
+			"escrow_email" => ESCROW_EMAIL,
+			"xmain_email" => $xmain_email,
+			"xescrow_email" => $xescrow_email,
+			)));
+	}
+	public function updateaddress(){
+		if(!$this->request->query['recordid']){
+			return $this->render(array('json' => array("Error"=>"recordid not specified")));
+		}
+		if(!$this->request->query['walletid']){
+			return $this->render(array('json' => array("Error"=>"walletid not specified")));
+		}		
+		if(!$this->request->query['pk0']){
+			return $this->render(array('json' => array("Error"=>"pk0 not specified")));
+		}
+		if(!$this->request->query['pk1']){
+			return $this->render(array('json' => array("Error"=>"pk1 not specified")));
+		}
+		if(!$this->request->query['pk2']){
+			return $this->render(array('json' => array("Error"=>"pk2 not specified")));
+		}
+		$coin = new Greencoin('http://'.GREENCOIN_WALLET_SERVER.':'.GREENCOIN_WALLET_PORT,GREENCOIN_WALLET_USERNAME,GREENCOIN_WALLET_PASSWORD);
+		$security = (int)2;
+		$publickeys = array(
+			$this->request->query['pk0'],
+			$this->request->query['pk1'],
+			$this->request->query['pk2'],
+		);
+		$createMultiSig	= $coin->createmultisig($security,$publickeys);
+		$data = array(
+			'msx'=>$createMultiSig
+		);
+		$conditions = array(
+			'walletid' => $this->request->query['walletid']
+		);
+		Details::update($data,$conditions);
+		
+		//////////// Send Email //////////////////////////////////////////
+			$view  = new View(array(
+				'loader' => 'File',
+				'renderer' => 'File',
+				'paths' => array(
+					'template' => '{:library}/views/{:controller}/{:template}.{:type}.php'
+				)
+			));
+			$body = $view->render(
+				'template',
+				compact('email','verification','name'),
+				array(
+					'controller' => 'users',
+					'template'=>'confirm',
+					'type' => 'mail',
+					'layout' => false
+				)
+			);
+
+			$transport = Swift_MailTransport::newInstance();
+			$mailer = Swift_Mailer::newInstance($transport);
 	
+			$message = Swift_Message::newInstance();
+			$message->setSubject("Verification of email from ".COMPANY_URL);
+			$message->setFrom(array(NOREPLY => 'Verification email '.COMPANY_URL));
+			$message->setTo($Users->email);
+			$message->addBcc(MAIL_1);
+			$message->addBcc(MAIL_2);			
+			$message->addBcc(MAIL_3);		
+
+			$message->setBody($body,'text/html');
+			
+			$mailer->send($message);
+
+		//////////////////////////////////////////////////////////////////
+		
+		return $this->render(array('json' => array("success"=>1)));
+	}
+	public function checkUser(){
+		$user = Users::find('first');
+		$detail = Details::find('first');
+		$uuid = new Uuid();
+		$xemail = $uuid->hashme($user['email']);
+		$xwalletid = $uuid->hashme($user['walletid']);
+		$xmain_email = $uuid->hashme(MAIN_EMAIL);
+		$xescrow_email = $uuid->hashme(ESCROW_EMAIL);
+		return $this->render(array('json' => array(
+			"success"=>1,
+			"user"=>$user,
+			"detail"=>$detail,
+			"xemail"=>$xemail,
+			"xwalletid"=>$xwalletid,
+			"main_email" => MAIN_EMAIL,
+			"escrow_email" => ESCROW_EMAIL,
+			"xmain_email" => $xmain_email,
+			"xescrow_email" => $xescrow_email,
+
+			)));
+	}
+	public function checkaddress(){
+		$coin = new Greencoin('http://'.GREENCOIN_WALLET_SERVER.':'.GREENCOIN_WALLET_PORT,GREENCOIN_WALLET_USERNAME,GREENCOIN_WALLET_PASSWORD);
+		$security = (int)2;
+		$publickeys = array(
+			$this->request->query['pk0'],
+			$this->request->query['pk1'],
+			$this->request->query['pk2'],
+		);
+		$createMultiSig	= $coin->createmultisig($security,$publickeys);
+		$data = array(
+			'msx'=>$createMultiSig
+		);
+		return $this->render(array('json' => array(
+			"success"=>1,
+			"msx"=>$createMultiSig
+			)));
+	}	
 }
 ?>

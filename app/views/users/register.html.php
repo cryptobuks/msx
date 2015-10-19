@@ -40,4 +40,4 @@ $Comm = Parameters::find('first');
 		<a href="javascript:void(0);" class="btn btn-primary btn-block" onclick="registerUser();" >Register</a>
 		
 		<?=$this->form->end(); ?>
-    <a href="javascript:void(0);" class="btn btn-success btn-block" onclick="checkUser();" >Check</a>
+  <a href="javascript:void(0);" class="btn btn-success btn-block" onclick="checkUser();" >Check</a>

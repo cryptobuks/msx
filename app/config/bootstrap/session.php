@@ -23,11 +23,11 @@ Session::config(array(
 
 Auth::config(array(
     'member' => array(
-		'adapter' => 'Form',
-	    'model'   => 'Users', //Specify what model is used for auth
-        'fields'  => array('username', 'password'), //Specify which fields are used)
-	    'filters' => array('password' => array('lithium\util\String', 'hash')),
-        'validators' => array('password' => false)
+				'adapter' => 'Form',
+	   'model'   => 'Users', //Specify what model is used for auth
+    'fields'  => array('username', 'password'), //Specify which fields are used)
+	   'filters' => array('password' => array('lithium\util\String', 'hash')),
+    'validators' => array('password' => false)
 )));
 
 /**

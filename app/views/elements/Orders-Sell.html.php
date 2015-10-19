@@ -1,13 +1,12 @@
 <?php
 use lithium\storage\Session;
-$user = Session::read('member');
-
+$user = Session::read('default');
 ?>
 	<div class="col-md-6">
-		<div class="panel panel-success">
-			<div class="panel panel-heading">
-			<h2 class="panel-title"  style="font-weight:bold" href="#">Orders:
-			Sell <?=$first_curr?> &gt; <?=$second_curr?> <small><span class="pull-right">* - [Self] <?=$user['username']?></span></small></h2>
+<div class="card card-block" >
+		<div class="card-header bg-success">
+			<h3 class="card-title"  style="font-weight:bold" href="#">Orders:
+			Sell <?=$first_curr?> &gt; <?=$second_curr?> <small><span class="pull-right">* - [Self] <?=$user['username']?></span></small></h3>
 <?php  foreach($TotalSellOrders['result'] as $TSO){
 	$SellAmount = $TSO['Amount'];
 	$SellTotalAmount = $TSO['TotalAmount'];
@@ -15,8 +14,8 @@ $user = Session::read('member');
 
 ?>			
 			</div>
-		<div id="SellOrders" style="margin-top:-20px ">
-			<table class="table table-condensed table-bordered table-hover" style="font-size:12px ">
+		<div id="SellOrders">
+			<table class="table table-condensed table-bordered table-hover" style="font-size:14px ">
 				<thead>
 					<tr>
 					<th style="text-align:center " rowspan="2">#</th>					

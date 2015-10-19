@@ -1,7 +1,7 @@
 <div class="col-md-6">
-	<div class="panel panel-info">
-		<div class="panel-heading">
-		<h2 class="panel-title" style="cursor:pointer;font-weight:bold" onclick="document.getElementById('Graph').style.display='block';">Sell <?=$first_curr?> get <?=$second_curr?> <i class="glyphicon glyphicon-indent-left"></i></h2>
+<div class="card card-block" >
+			<div class="card-header bg-info">
+			<h2 class="card-title" style="cursor:pointer;font-weight:bold;color:black" onclick="document.getElementById('Graph').style.display='block';">Sell <?=$first_curr?> get <?=$second_curr?> <i class="fa fa-line-chart"></i></h2>
 		</div>
 <?=$this->form->create(null,array('id'=>'SellForm')); ?>		
 <input type="hidden" id="SellFirstCurrency" name="SellFirstCurrency" value="<?=$first_curr?>">

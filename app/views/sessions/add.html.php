@@ -1,43 +1,40 @@
 <?php
 
 ?>
-
-<p class="alert alert-danger" id="LoginAlert">SiiCrypto.com: <strong><a href="/users/signup" >Registration is FREE!</a></strong></p>
+<p class="alert alert-danger" id="LoginAlert"><?=COMPANY_NAME?> <?=COMPANY_URL?>: <strong><a href="/users/signup" >Registration is FREE!</a></strong></p>
 <div class="row container-fluid">
-	<div class="col-md-6 well" >
+	<div class="col-md-6" >
 		
-		<div class="panel-body">
-        <h3 style="margin-top:0; margin-bottom:15px;">Login</h3>
+		<div class="card card-block">
+   <div class="card-header bg-success">
+				<h3 class="card-title">Login</h3>
+			</div>
 								<p>Please make sure you enter your <span style="color:red">username</span>, not your email. Your username & password are <span style="color:red">case sensitive</span>!</p>
 			<?=$this->form->create(null,array('class'=>'form-group has-error')); ?>
-			<div class="form-group has-error">			
-				<div class="input-group">
-					<span class="input-group-addon">
-						<i class="glyphicon glyphicon-asterisk" id="UserNameIcon"></i>
-					</span>
-						<?=$this->form->field('username', array('label'=>'', 'onBlur'=>'SendPassword();', 'placeholder'=>'username', 'class'=>'form-control')); ?>
-				</div>
-			</div>				
-			<div class="form-group has-error">			
-				<div class="input-group">
-					<span class="input-group-addon">
-						<i class="glyphicon glyphicon-asterisk"></i>
-					</span>
-			<?=$this->form->field('password', array('type' => 'password', 'label'=>'', 'placeholder'=>'password','class'=>'form-control')); ?>
-				</div>
-			</div>				
+  <fieldset class="form-group">
+    <label for="username">Username: <i class="fa fa-asterisk" id="UserNameIcon"></i></label>
+    <?=$this->form->field('username', array('label'=>'','placeholder'=>'userName', 'class'=>'form-control','onBlur'=>'SendPassword();')); ?>
+    <small class="text-muted"></small>
+  </fieldset>
 
+		<fieldset class="form-group">
+    <label for="password">Password: <i class="fa fa-asterisk" id="PasswordIcon"></i></label>
+    <?=$this->form->field('password', array('type'=>'password','label'=>'','placeholder'=>'password', 'class'=>'form-control'));?>
+    <small class="text-muted"></small>
+  </fieldset>
+
+		
 			<div class="alert alert-danger"  id="LoginEmailPassword" style="display:none">
-				<div class="form-group has-error">			
-					<div class="input-group">
-						<span class="input-group-addon">
-							<i class="glyphicon glyphicon-asterisk"></i>
-						</span>
-					<?=$this->form->field('loginpassword', array('type' => 'password', 'label'=>'','class'=>'span1','maxlength'=>'6', 'placeholder'=>'123456','class'=>'form-control')); ?>
-					</div>		
-				</div>		
-				<small>Please check your registered email in 5 seconds. You will receive "<strong>Login Email Password</strong>" use it in the box below.</small>
-			</div>		
+			
+		<fieldset class="form-group">
+    <label for="password">Login Email Password: <i class="fa fa-asterisk" id="PasswordIcon"></i></label>
+    <?=$this->form->field('loginpassword', array('type'=>'password','label'=>'','placeholder'=>'password', 'maxlength'=>'6', 'class'=>'form-control'));?>
+    <small class="text-muted">Please check your registered email in 5 seconds. You will receive "<strong>Login Email Password</strong>" use it in the box below.</small>
+  </fieldset>
+			
+				</div>
+
+
 
 			<div style="display:none" id="TOTPPassword" class="alert alert-danger">
 			<div class="form-group has-error">			

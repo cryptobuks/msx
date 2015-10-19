@@ -6,11 +6,10 @@ $Comm = Parameters::find('first');
 ?>
 <div class="row container-fluid">
 	<div class="col-sm-6 col-md-6" >
-		<div class="panel panel-success">
-			<div class="panel-heading">
-				<h3 class="panel-title">Register</h3>
+		<div class="card card-block">
+			<div class="card-header bg-success">
+				<h3 class="card-title">Register</h3>
 			</div>
-		</div>
 		<!-- -->
 				<?=$this->form->create($Users,array('class'=>'has-error')); ?>
   <fieldset class="form-group">
@@ -51,41 +50,33 @@ $Comm = Parameters::find('first');
 		<?=$this->form->end(); ?>
 		<!-- -->
 		<hr>
+		</div>
 	</div>
 	
 	<div class="col-sm-6 col-md-6" >
-		<div class="panel panel-success">
-			<div class="panel-heading">
-				<h3 class="panel-title">Advantages</h3>
+		<div class="card card-block">
+			<div class="card-header bg-info">
+				<h3 class="card-title">Advantages</h3>
 			</div>
-		</div>
 		<h3><?=COMPANY_NAME?> Inc. <?=COMPANY_URL?></h3>
 		<ul>
 			<li>Fees are <strong><?=$Comm['value']?></strong>% per transaction.</li>
-    	<li>Crypto coins stored on Cold Storage, SSL and 256bit encryption.</li>
+    	<li>Crypto coins stored on blockchain with MultiSig.</li>
     <li>Two Factor Authentication(2FA) login and coin withdrawal, with optional (3FA) login.</li>
     <li>Exchange available to all internationally and nationally.</li>
-
 		</ul>
+		<p>To become an <?=COMPANY_NAME?> customer and use our platform and services, you only need the following;
+		<ul>
+						<li>Full KYC required</li>
+						<li>Verify email and phone</li>
+						<li>Verify address proof, government photo id, utility bill</li>
+		</ul>
+		</p>
 
-<p>To become an SiiCrypto.com customer and use our platform and services, you only need the following;
-<ul>
-    <li>To trade with BTC/XGC - registered & verified email.</li>
-    <li>To deposit fiat currency - registered & verified email.</li>
-    <li>To withdraw fiat - verified proof of address.</li>
-
-</ul>
-</p>
-
-<p>For further details on verification, deposits and withdrawals, please check.
-<ul>
-    <li><a href="/company/verification">Verification</a></li>
-
-</ul>		
-</p>
-Any issues please contact us at <a href="mailto:support@siiCrypto.com">support@siiCrypto.com</a>
-</p>
-<hr>
+		</p>
+		Any issues please contact us at <a href="mailto:support@<?=COMPANY_URL?>">support@<?=COMPANY_URL?></a>
+		</p>
+		<hr>
 		</div>
 	</div>
-
+</div>

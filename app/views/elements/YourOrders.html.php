@@ -2,12 +2,12 @@
 use lithium\util\String;
 ?>
 		<div class="col-md-6">
-			<div class="panel panel-success">
-				<div class="panel-heading">
-				<h2 class="panel-title"  style="font-weight:bold" >Pending Orders</h2>
+			<div class="card card-block" >
+				<div class="card-header bg-primary">
+				<h3 class="card-title"  style="font-weight:bold" >Pending Orders</h3>
 				</div>
 			<div id="YourOrders" style="overflow:auto;" class="fade in">			
-			<table class="table table-condensed table-bordered table-hover" style="font-size:11px">
+			<table class="table table-condensed table-bordered table-hover" style="font-size:14px">
 				<thead>
 					<tr>
 						<th style="text-align:center ">Exchange</th>

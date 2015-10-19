@@ -115,12 +115,10 @@ class UsersController extends \lithium\action\Controller {
 		$details = Details::find('first',
 			array('conditions'=>array('user_id'=>$id))
 		);
-
 		if(isset($details['email']['verified'])){
 			$msg = "Your email is verified.";
 		}else{
 			$msg = "Your email is <strong>not</strong> verified. Please check your email to verify.";
-			
 		}
 		$title = "Email verification";
 		return compact('msg','title');
